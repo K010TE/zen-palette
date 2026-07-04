@@ -160,6 +160,10 @@ function createPalette() {
   el.style.zIndex = '2147483647';
   el.style.backdropFilter = 'blur(4px)';
 
+  const inputName = `zen-palette-${Date.now()}-${Math.random()
+    .toString(16)
+    .slice(2)}`;
+
   el.innerHTML = `
     <div style="
       width: min(640px, calc(100vw - 48px));
@@ -170,31 +174,54 @@ function createPalette() {
       box-shadow: 0 24px 80px rgba(0,0,0,0.45);
       font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     ">
-      <input id="zen-palette-input" placeholder="Search or enter URL..." style="
-        width: 100%;
-        box-sizing: border-box;
-        padding: 16px 18px;
-        font-size: 18px;
-        border-radius: 12px;
-        border: 1px solid rgba(255,255,255,0.16);
-        outline: none;
-        background: #1b1b1b;
-        color: white;
-        margin-bottom: 10px;
-      "/>
+      <input
+        data-zen-palette-input
+        name="${inputName}"
+        type="text"
+        placeholder="Search or enter URL..."
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off"
+        spellcheck="false"
+        aria-autocomplete="none"
+        data-form-type="other"
+        data-lpignore="true"
+        data-1p-ignore
+        style="
+          width: 100%;
+          box-sizing: border-box;
+          padding: 16px 18px;
+          font-size: 18px;
+          border-radius: 12px;
+          border: 1px solid rgba(255,255,255,0.16);
+          outline: none;
+          background: #1b1b1b;
+          color: white;
+          margin-bottom: 10px;
+        "
+      />
 
-      <div id="zen-palette-results"></div>
+      <div data-zen-palette-results></div>
     </div>
   `;
 
   document.documentElement.appendChild(el);
 
-  const input = el.querySelector('#zen-palette-input') as HTMLInputElement;
-  const resultsContainer = el.querySelector('#zen-palette-results') as HTMLDivElement;
+  const input = el.querySelector(
+    '[data-zen-palette-input]',
+  ) as HTMLInputElement;
+
+  const resultsContainer = el.querySelector(
+    '[data-zen-palette-results]',
+  ) as HTMLDivElement;
 
   let currentResults = getResults('');
 
   renderResults(resultsContainer, currentResults);
+
+  input.value = '';
+  input.setAttribute('autocomplete', 'off');
+  input.setAttribute('name', inputName);
 
   setTimeout(() => {
     input.focus();
